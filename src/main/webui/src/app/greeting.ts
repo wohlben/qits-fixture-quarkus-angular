@@ -14,8 +14,9 @@ interface GreetingResponse {
  *
  * The name is taken from the route and URL-decoded before use, so /greeting/Ada%20Lovelace greets
  * "Ada Lovelace". (Angular's Router already decodes path params; we decode defensively and fall back
- * to the raw value so a stray literal '%' can't throw.) It POSTs { name } to the same-origin
- * /api/greetings and shows "Hello {name}" from the response.
+ * to the raw value so a stray literal '%' can't throw.) It POSTs { name } to the same-origin,
+ * base-relative `api/greetings` (resolved against <base href>, so it works both at `/` and under the
+ * qits daemon web-view prefix `/daemon/{worktree}/{daemon}/`) and shows "Hello {name}".
  */
 @Component({
   selector: 'app-greeting',
@@ -35,7 +36,7 @@ export class Greeting {
   protected readonly greeting = toSignal(
     this.route.paramMap.pipe(
       map((params) => decodeName(params.get('name'))),
-      switchMap((name) => this.http.post<GreetingResponse>('/api/greetings', { name })),
+      switchMap((name) => this.http.post<GreetingResponse>('api/greetings', { name })),
     ),
   );
 }

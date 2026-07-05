@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./mvnw test)",
+      "Bash(./mvnw package)",
+      "Bash(./mvnw quarkus:dev)"
+    ]
+  }
+}

@@ -48,6 +48,17 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest</artifactId>
         </dependency>
+        <!-- Zero-code OTLP export (traces + logs + metrics). Endpoint/service-name/resource-attributes
+             are injected by qits at daemon launch via OTEL_EXPORTER_OTLP_* env vars. -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-opentelemetry</artifactId>
+        </dependency>
+        <!-- /q/health for the health-checks feature and daemon readiness. -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-health</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit</artifactId>
@@ -122,6 +133,26 @@
                 <skipITs>false</skipITs>
                 <quarkus.native.enabled>true</quarkus.native.enabled>
             </properties>
+        </profile>
+
+        <!-- IDE/agent-only build isolation. Activates ONLY under m2e — VS Code's redhat.java AND
+             the qits workspace coding agent's bundled jdtls both set the `m2e.version` user property
+             on every Maven resolve (m2e-core's MavenExecutionContext); no `./mvnw` CLI invocation
+             (including `quarkus:dev`) sets it. Relocating the whole build DIRECTORY sends the
+             language server's classes/generated-sources to target-ide/, so the running `quarkus:dev`
+             dev-server keeps exclusive ownership of target/classes and the two never fight (an
+             incomplete LS model would otherwise write broken *.class stubs the dev-server hot-reloads
+             and dies on). See docs/guides/quarkus-angular-integration.md, "Tier 0b". -->
+        <profile>
+            <id>m2e-separate-output</id>
+            <activation>
+                <property>
+                    <name>m2e.version</name>
+                </property>
+            </activation>
+            <build>
+                <directory>${project.basedir}/target-ide</directory>
+            </build>
         </profile>
     </profiles>
 </project>
