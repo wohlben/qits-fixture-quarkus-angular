@@ -22,7 +22,7 @@ interface GreetingResponse {
   selector: 'app-greeting',
   template: `
     @if (greeting(); as g) {
-      <h1>Hello {{ g.name }}</h1>
+      <h1>Hello, {{ g.name }}!</h1>
       <p>Greeted at {{ g.timestamp }}</p>
     } @else {
       <p>Greeting…</p>
