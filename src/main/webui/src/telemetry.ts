@@ -57,9 +57,16 @@ export async function initTelemetry(): Promise<void> {
   // against location.href, not <base> — so build absolute per-signal URLs from the rebased base.
   const exportUrl = (signal: string) => new URL(`api/otel/v1/${signal}`, document.baseURI).href;
 
+  // Flush every second, not the default five: the qits web view is an iframe, and removing an
+  // iframe (closing the floaty) fires no pagehide/visibilitychange — anything still buffered is
+  // lost. A short interval shrinks that window to <=1s; dev traffic is tiny, so it costs nothing.
+  const flush = { scheduledDelayMillis: 1000 };
+
   const tracerProvider = new WebTracerProvider({
     resource,
-    spanProcessors: [new BatchSpanProcessor(new OTLPTraceExporter({ url: exportUrl('traces') }))],
+    spanProcessors: [
+      new BatchSpanProcessor(new OTLPTraceExporter({ url: exportUrl('traces') }), flush),
+    ],
   });
   // Defaults: StackContextManager (this app is zoneless) + W3C trace-context/baggage propagators.
   tracerProvider.register();
@@ -76,11 +83,15 @@ export async function initTelemetry(): Promise<void> {
   const loggerProvider = new LoggerProvider({
     resource,
     processors: [
-      new BatchLogRecordProcessor({ exporter: new OTLPLogExporter({ url: exportUrl('logs') }) }),
+      new BatchLogRecordProcessor({
+        exporter: new OTLPLogExporter({ url: exportUrl('logs') }),
+        ...flush,
+      }),
     ],
   });
   errorLogger = loggerProvider.getLogger('browser-errors');
-  // No flush wiring needed: both batch processors auto-flush on document hide by default.
+  // No extra flush wiring: both batch processors also auto-flush on document hide by default
+  // (tab switches); the short interval above covers iframe removal, which hides nothing.
 }
 
 /**
