@@ -6,6 +6,12 @@ exists only as a **git fixture** for qits' own tests and demos — something bui
 to point workspace-container, daemon, action, and coding-agent features at. It is not part of the
 qits Maven build.
 
+It is also the **reference implementation of the qits integration contract** (web-view base
+handling, log observation, backend + frontend OTEL via the `/api/config.json` relay and
+`/api/otel/v1/*` passthrough). The contract itself is documented in qits at
+`docs/guides/quarkus-angular-integration.md` — integrate your own app by following that guide and
+diffing against this repo's `main`.
+
 ## What it does
 
 - **Backend** — one endpoint. `POST /api/greetings` with `{"name": "..."}` returns
