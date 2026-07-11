@@ -15,8 +15,8 @@ diffing against this repo's `main`.
 ## What it does
 
 - **Backend** — one endpoint. `POST /api/greetings` with `{"name": "..."}` returns
-  `{"name": "...", "timestamp": "<server time>"}` (`GreetingResource`). The `/api` prefix is
-  `quarkus.rest.path`.
+  `{"name": "...", "timestamp": "<server time>"}` (`GreetingResource`, delegating to
+  `GreetingService`). The `/api` prefix is `quarkus.rest.path`.
 - **Frontend** — one page. Route `/greeting/:name` (`Greeting`) URL-decodes the name, `POST`s it to
   the same-origin `/api/greetings`, and renders **"Hello {name}"** with the returned timestamp.
 - **Fallback** — `/greeting` (and `/greeting/`), `/`, and anything unmatched route to
@@ -31,7 +31,7 @@ Open <http://localhost:8080/> → it lands on **Hello world**. Try `/greeting/Ad
 ```shell
 ./mvnw quarkus:dev      # live-reload; Quinoa runs `ng serve` and proxies the UI on one origin
 ./mvnw package          # production build (pnpm + Angular via Quinoa), then quarkus-app/
-./mvnw test             # the one @QuarkusTest against POST /api/greetings
+./mvnw test             # @QuarkusTests: greetings echo, telemetry enrichment, config relay, OTLP passthrough
 ```
 
 Requires JDK 25 and a package manager Quinoa can drive (pnpm — see `pnpm-lock.yaml`). No database, no
@@ -40,7 +40,9 @@ network at runtime.
 ## Layout
 
 ```
-src/main/java/.../GreetingResource.java     the one REST endpoint
+src/main/java/.../GreetingResource.java     the one REST endpoint (boundary)
+src/main/java/.../GreetingService.java      composes the greeting (@WithSpan business seam)
+src/main/java/.../TelemetryMetaFilter.java  stamps code.* handler attribution on server spans
 src/main/resources/application.properties   quarkus.rest.path=/api + Quinoa config
 src/main/webui/                             Angular 21 app (Quinoa auto-detects it)
   src/app/app.routes.ts                     the routes described above

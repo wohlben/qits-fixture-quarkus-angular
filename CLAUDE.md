@@ -9,7 +9,8 @@ served by Quinoa from one origin. It is intentionally tiny — the smallest thin
 recognisably a real Quarkus+Angular service.
 
 - **Backend** — `src/main/java/eu/wohlben/qits/testingrepo/GreetingResource.java`:
-  `POST /api/greetings` with `{ "name": "..." }` returns `{ "name": "...", "timestamp": "<Instant>" }`.
+  `POST /api/greetings` with `{ "name": "..." }` returns `{ "name": "...", "timestamp": "<Instant>" }`,
+  composed by the injected `GreetingService` (the boundary/control seam).
   The `/api` prefix is `quarkus.rest.path`; the resource declares `/greetings`.
 - **Frontend** — `src/main/webui/` (Angular, pnpm). Route `/greeting/:name` (`greeting.ts`) POSTs the
   name to the **base-relative** `api/greetings` and renders "Hello, {name}!". `/`, `/greeting` and any
@@ -32,14 +33,19 @@ recognisably a real Quarkus+Angular service.
   `window.fetch` wrapper — all in `telemetry.ts`, all dark when `telemetry: null`. The app stays
   zoneless: only synchronous handler work nests under interaction spans, and the
   user-interaction instrumentation's `zone.js` peer is marked optional via a pnpm
-  `packageExtensions` entry.
+  `packageExtensions` entry. The backend spans are meta-enriched too: `TelemetryMetaFilter`
+  stamps `code.function.name` (FQCN + method) and `code.file.path` (Maven-layout derivation) on
+  every matched server span, and `GreetingService.compose` (`@WithSpan`, `greeting.name`
+  attribute) gives each trace an interior span between "request in" and "response out". Log
+  records need no filter — Quarkus itself stamps `code.function.name`/`code.line.number` on every
+  exported log record.
 
 ## Commands
 
 ```bash
 ./mvnw quarkus:dev    # live-reload dev mode (Quarkus + Quinoa-managed ng serve)
 ./mvnw package        # full build; Angular production bundle baked into the jar
-./mvnw test           # @QuarkusTests: greetings echo, config relay, OTLP passthrough
+./mvnw test           # @QuarkusTests: greetings echo, telemetry enrichment, config relay, OTLP passthrough
 ```
 
 ## Conventions
