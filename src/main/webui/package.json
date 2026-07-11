@@ -9,6 +9,17 @@
   },
   "private": true,
   "packageManager": "pnpm@10.33.0",
+  "pnpm": {
+    "packageExtensions": {
+      "@opentelemetry/instrumentation-user-interaction": {
+        "peerDependenciesMeta": {
+          "zone.js": {
+            "optional": true
+          }
+        }
+      }
+    }
+  },
   "dependencies": {
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
@@ -23,6 +34,7 @@
     "@opentelemetry/instrumentation": "^0.220.0",
     "@opentelemetry/instrumentation-document-load": "^0.65.0",
     "@opentelemetry/instrumentation-fetch": "^0.220.0",
+    "@opentelemetry/instrumentation-user-interaction": "^0.64.0",
     "@opentelemetry/resources": "^2.9.0",
     "@opentelemetry/sdk-logs": "^0.220.0",
     "@opentelemetry/sdk-trace-web": "^2.9.0",

@@ -23,7 +23,16 @@ recognisably a real Quarkus+Angular service.
   to `${OTEL_EXPORTER_OTLP_ENDPOINT}` (404 unconfigured, 502 upstream down). The SPA side
   (`src/main/webui/src/telemetry.ts`, run before bootstrap in `main.ts`) stays dark on
   `telemetry: null`; otherwise it exports document-load + fetch spans and ships uncaught errors as
-  ERROR log records via a custom Angular `ErrorHandler`.
+  ERROR log records via a custom Angular `ErrorHandler`. The telemetry is meta-enriched: every
+  span/log carries `app.route.path`/`app.route.url` (stamping processors; navigation spans via
+  `provideRouteTelemetry()` in `app.config.ts`), clicks/submits become interaction spans named by
+  the framework-free `data-track-event` DOM attribute (the greeting form's `save-greeting`; the
+  attribute goes on the event target or an ancestor — a submit's target is the form), and fetch
+  spans carry `code.function.name`/`code.file.path`/`code.stacktrace` caller attribution from a
+  `window.fetch` wrapper — all in `telemetry.ts`, all dark when `telemetry: null`. The app stays
+  zoneless: only synchronous handler work nests under interaction spans, and the
+  user-interaction instrumentation's `zone.js` peer is marked optional via a pnpm
+  `packageExtensions` entry.
 
 ## Commands
 
