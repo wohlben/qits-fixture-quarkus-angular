@@ -29,8 +29,8 @@ importers:
         specifier: ^21.2.0
         version: 21.2.17(@angular/common@21.2.17(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(@angular/platform-browser@21.2.17(@angular/common@21.2.17(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2)))(rxjs@7.8.2)
       '@qits/angular':
-        specifier: git+https://github.com/wohlben/qits-angular.git#a49bb760cd2a30993866e2051cdff6e1c3de732f
-        version: https://codeload.github.com/wohlben/qits-angular/tar.gz/a49bb760cd2a30993866e2051cdff6e1c3de732f(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(@angular/router@21.2.17(@angular/common@21.2.17(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(@angular/platform-browser@21.2.17(@angular/common@21.2.17(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2)))(rxjs@7.8.2))
+        specifier: git+https://github.com/wohlben/qits-angular.git#2af28f829ef3904aa057104f2b9da54cc1fbb7ce
+        version: https://codeload.github.com/wohlben/qits-angular/tar.gz/2af28f829ef3904aa057104f2b9da54cc1fbb7ce(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(@angular/router@21.2.17(@angular/common@21.2.17(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(@angular/platform-browser@21.2.17(@angular/common@21.2.17(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2)))(rxjs@7.8.2))
       rxjs:
         specifier: ~7.8.0
         version: 7.8.2
@@ -1099,8 +1099,8 @@ packages:
     resolution: {integrity: sha512-tmmZ3lQxAe/k/+rNnXQRawJ4NjxO2hqiOLTHvWchtGZULp4RyFeh6aU4XdOYBFe2KE1oShQTv4AblOs2iOrNnQ==}
     engines: {node: '>= 10.0.0'}
 
-  '@qits/angular@https://codeload.github.com/wohlben/qits-angular/tar.gz/a49bb760cd2a30993866e2051cdff6e1c3de732f':
-    resolution: {tarball: https://codeload.github.com/wohlben/qits-angular/tar.gz/a49bb760cd2a30993866e2051cdff6e1c3de732f}
+  '@qits/angular@https://codeload.github.com/wohlben/qits-angular/tar.gz/2af28f829ef3904aa057104f2b9da54cc1fbb7ce':
+    resolution: {tarball: https://codeload.github.com/wohlben/qits-angular/tar.gz/2af28f829ef3904aa057104f2b9da54cc1fbb7ce}
     version: 0.0.1
     peerDependencies:
       '@angular/core': ^21.2.0
@@ -3563,7 +3563,7 @@ snapshots:
       '@parcel/watcher-win32-x64': 2.5.6
     optional: true
 
-  '@qits/angular@https://codeload.github.com/wohlben/qits-angular/tar.gz/a49bb760cd2a30993866e2051cdff6e1c3de732f(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(@angular/router@21.2.17(@angular/common@21.2.17(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(@angular/platform-browser@21.2.17(@angular/common@21.2.17(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2)))(rxjs@7.8.2))':
+  '@qits/angular@https://codeload.github.com/wohlben/qits-angular/tar.gz/2af28f829ef3904aa057104f2b9da54cc1fbb7ce(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(@angular/router@21.2.17(@angular/common@21.2.17(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(@angular/platform-browser@21.2.17(@angular/common@21.2.17(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2)))(rxjs@7.8.2))':
     dependencies:
       '@angular/core': 21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2)
       '@angular/router': 21.2.17(@angular/common@21.2.17(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(@angular/platform-browser@21.2.17(@angular/common@21.2.17(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@21.2.17(@angular/compiler@21.2.17)(rxjs@7.8.2)))(rxjs@7.8.2)
