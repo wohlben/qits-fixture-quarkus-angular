@@ -42,7 +42,10 @@ recognisably a real Quarkus+Angular service.
   every matched server span, and `GreetingService.compose` (`@WithSpan`, `greeting.name`
   attribute) gives each trace an interior span between "request in" and "response out". Log
   records need no filter — Quarkus itself stamps `code.function.name`/`code.line.number` on every
-  exported log record.
+  exported log record. `ConfigResource` also relays a `capture` section (gated on
+  `QITS_CAPTURE_ENDPOINT` → `qits.capture.endpoint`, independently nullable from `telemetry`):
+  `provideQitsIntegration(withFeatureCapture())` renders the library's floaty capture button,
+  which snapshots the running SPA straight into a qits workspace.
 
 ## Commands
 

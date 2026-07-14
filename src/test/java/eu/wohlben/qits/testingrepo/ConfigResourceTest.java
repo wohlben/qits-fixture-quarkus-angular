@@ -21,6 +21,16 @@ class ConfigResourceTest {
   }
 
   @Test
+  void configReportsNullCaptureWithoutCaptureEndpoint() {
+    given()
+        .when()
+        .get("/api/config.json")
+        .then()
+        .statusCode(200)
+        .body("capture", nullValue());
+  }
+
+  @Test
   void otelProxyIsGoneWithoutOtelEndpoint() {
     given()
         .contentType("application/x-protobuf")

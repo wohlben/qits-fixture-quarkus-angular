@@ -10,13 +10,15 @@ import java.util.Optional;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
- * {@code GET /api/config.json}: relays the backend's OpenTelemetry identity to its own SPA. The
- * browser cannot read env vars, but this process can — qits injects {@code OTEL_EXPORTER_OTLP_*} at
- * daemon launch, and MicroProfile Config surfaces them as {@code otel.exporter.otlp.endpoint} etc.
- * (in a production build the same keys would come from application.properties instead).
+ * {@code GET /api/config.json}: relays the backend's qits identity to its own SPA. The browser
+ * cannot read env vars, but this process can — qits injects {@code OTEL_EXPORTER_OTLP_*} and
+ * {@code QITS_CAPTURE_ENDPOINT} at daemon launch, and MicroProfile Config surfaces them as
+ * {@code otel.exporter.otlp.endpoint} / {@code qits.capture.endpoint} etc. (in a production build
+ * the same keys would come from application.properties instead).
  *
- * <p>{@code telemetry} is {@code null} when no OTLP endpoint is configured — the gate that keeps
- * the SPA dark when the app runs standalone or the daemon's otel toggle is off.
+ * <p>The sections are independently nullable gates: {@code telemetry} is {@code null} without an
+ * OTLP endpoint (SPA telemetry stays dark), {@code capture} is {@code null} without a capture
+ * endpoint (no capture button). The backend relays; it does not proxy, validate, or stamp.
  */
 @Path("/config.json")
 public class ConfigResource {
@@ -30,19 +32,36 @@ public class ConfigResource {
   @ConfigProperty(name = "otel.service.name")
   Optional<String> serviceName;
 
-  public record ConfigResponse(TelemetryConfig telemetry) {}
+  @ConfigProperty(name = "qits.capture.endpoint")
+  Optional<String> captureEndpoint;
+
+  public record ConfigResponse(TelemetryConfig telemetry, CaptureConfig capture) {}
 
   public record TelemetryConfig(Map<String, String> resourceAttributes, String serviceName) {}
+
+  public record CaptureConfig(String ingestUrl, Map<String, String> resourceAttributes) {}
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public ConfigResponse config() {
+    return new ConfigResponse(telemetry(), capture());
+  }
+
+  private TelemetryConfig telemetry() {
     if (endpoint.isEmpty()) {
-      return new ConfigResponse(null);
+      return null;
     }
-    return new ConfigResponse(
-        new TelemetryConfig(
-            parseAttributes(resourceAttributes.orElse("")), serviceName.orElse("webapp")));
+    return new TelemetryConfig(
+        parseAttributes(resourceAttributes.orElse("")), serviceName.orElse("webapp"));
+  }
+
+  // Carries its own copy of the resource attributes (same otel.resource.attributes source) so the
+  // two sections stay independently nullable.
+  private CaptureConfig capture() {
+    if (captureEndpoint.isEmpty()) {
+      return null;
+    }
+    return new CaptureConfig(captureEndpoint.get(), parseAttributes(resourceAttributes.orElse("")));
   }
 
   /** Parses the {@code OTEL_RESOURCE_ATTRIBUTES} {@code k=v,k=v} list (qits writes plain pairs). */
