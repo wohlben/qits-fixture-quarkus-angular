@@ -30,7 +30,8 @@
     "@angular/forms": "^21.2.0",
     "@angular/platform-browser": "^21.2.0",
     "@angular/router": "^21.2.0",
-    "@qits/angular": "git+https://github.com/wohlben/qits-angular.git#2af28f829ef3904aa057104f2b9da54cc1fbb7ce",
+    "@ngrx/signals": "^21.1.0",
+    "@qits/angular": "git+https://github.com/wohlben/qits-angular.git#0c49d33596b30f56aaced1afb61d02420dc88047",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

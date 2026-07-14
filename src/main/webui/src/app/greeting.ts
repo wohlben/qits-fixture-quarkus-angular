@@ -2,7 +2,8 @@ import { Component, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, distinctUntilChanged, map, merge, switchMap } from 'rxjs';
+import { Subject, distinctUntilChanged, map, merge, switchMap, tap } from 'rxjs';
+import { GreetingHistoryStore } from './greeting-history-store';
 
 interface GreetingResponse {
   name: string;
@@ -47,6 +48,7 @@ export class Greeting {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly http = inject(HttpClient);
+  private readonly history = inject(GreetingHistoryStore);
 
   private readonly routeName = this.route.paramMap.pipe(
     map((params) => decodeName(params.get('name'))),
@@ -59,6 +61,8 @@ export class Greeting {
     merge(this.routeName, this.submittedName).pipe(
       distinctUntilChanged(),
       switchMap((name) => this.http.post<GreetingResponse>('api/greetings', { name })),
+      // Every answered greeting lands in the history store — the state a capture snapshots.
+      tap((g) => this.history.record(g.name)),
     ),
   );
 

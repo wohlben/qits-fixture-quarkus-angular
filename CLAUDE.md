@@ -45,7 +45,9 @@ recognisably a real Quarkus+Angular service.
   exported log record. `ConfigResource` also relays a `capture` section (gated on
   `QITS_CAPTURE_ENDPOINT` → `qits.capture.endpoint`, independently nullable from `telemetry`):
   `provideQitsIntegration(withFeatureCapture())` renders the library's floaty capture button,
-  which snapshots the running SPA straight into a qits workspace.
+  which snapshots the running SPA straight into a qits workspace. The SPA keeps a root
+  `GreetingHistoryStore` (`@ngrx/signals`) tagged `withQitsSnapshot('greetingHistory')`, so a
+  capture's goal also carries the greeting history as app state.
 
 ## Commands
 
