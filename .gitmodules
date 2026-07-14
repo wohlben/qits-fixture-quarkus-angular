@@ -1,0 +1,4 @@
+[submodule "src/main/webui"]
+	path = src/main/webui
+	url = ../qits-fixture-angular.git
+	branch = feature/diverged
