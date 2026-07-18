@@ -51,6 +51,15 @@ daemons:
         path: /
         expect-status: 2xx,3xx,4xx
 
+# A minimal bootstrap chain — the end-to-end regression carrier for qits' bootstrap-commands
+# feature (ingestion → provision-time chain → check-skip on re-run). The marker lives in /tmp, so
+# it dies with the container: a fresh provision runs the command, a manual re-run skips it.
+bootstrap:
+  - name: prepare-workspace
+    description: Stamp the container's bootstrap marker (skipped once present).
+    execute: date > /tmp/qits-bootstrap-marker && echo "bootstrap marker written"
+    check: test ! -f /tmp/qits-bootstrap-marker
+
 actions:
   - name: build-project
     description: Compile and package the app; the Angular bundle is baked into the jar.
