@@ -1,0 +1,69 @@
+# qits repository configuration (docs/features/2026-07-18_qits-config-in-repo-configuration.md).
+# Declares this repo's dev-server daemon and its build/lint/test actions so qits ingests them on
+# clone — the self-describing counterpart to what SeedWebappService used to build programmatically.
+version: 1
+
+daemons:
+  # A web-viewable dev-server daemon: `quarkus:dev` serving the Quarkus REST API plus the Angular
+  # SPA (Quinoa), live-reloaded. The web view frames the FRONTEND dev server on :4200; entry-path
+  # "greeting" lands the frame on the greeting screen. otel=true makes the supervisor inject the
+  # OTEL exporter env. LOG_LEVEL classifies Java traces; the PATTERN observer flags dev-mode build
+  # failures; the FILE source tails the rolling quarkus.log.
+  - name: Quarkus dev server
+    description: >-
+      Runs `./mvnw quarkus:dev` — the Quarkus REST API and the Angular SPA (Quinoa), live-reloaded
+      and web-viewable through the qits proxy.
+    # Quarkus ignores the generic OTEL_* SDK vars, so bridge the endpoint qits injects into the
+    # Quarkus config key at launch. Quarkus serves under $QITS_PUBLIC_BASE so the dev proxy can
+    # forward the based API path verbatim.
+    start: >-
+      ./mvnw -q quarkus:dev -Dquarkus.http.host=0.0.0.0 -Dquarkus.http.port=8080
+      -Dquarkus.http.root-path="${QITS_PUBLIC_BASE:-/}"
+      -Dquarkus.otel.exporter.otlp.endpoint="${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4317}"
+    # Readiness = the Angular dev server being up (Quinoa logs it), not Quarkus' earlier line.
+    ready-pattern: "(?i)dev server is up|Application bundle generation complete|Local:.*:4200"
+    stop-signal: TERM
+    restart-policy: ON_FAILURE
+    auto-start: true
+    max-restarts: 3
+    otel: true
+    web-view:
+      port: 4200
+      entry-path: greeting
+    observers:
+      - kind: LOG_LEVEL
+      - kind: PATTERN
+        pattern: "(?i)(BUILD FAILURE|Failed to start Quarkus|Live reload failed)"
+        severity: ERROR
+    sources:
+      - path: quarkus.log
+        label: Quarkus dev log
+    # The two-servers-one-daemon case: Quarkus /q/health sits under $QITS_PUBLIC_BASE so a COMMAND
+    # check expands the env var at probe time; any HTTP answer on :4200 means Angular is serving.
+    health-checks:
+      - name: Quarkus
+        kind: COMMAND
+        command: |-
+          curl -fsS -m 2 "http://127.0.0.1:8080${QITS_PUBLIC_BASE%/}/q/health"
+      - name: Angular
+        kind: HTTP
+        port: 4200
+        path: /
+        expect-status: 2xx,3xx,4xx
+
+actions:
+  - name: build-project
+    description: Compile and package the app; the Angular bundle is baked into the jar.
+    execute: ./mvnw package
+  - name: lint-backend
+    description: Check the Java sources' formatting / static analysis.
+    execute: ./mvnw spotless:check
+  - name: lint-frontend
+    description: Lint the Angular sources.
+    execute: pnpm --dir src/main/webui lint
+  - name: run-unit-tests
+    description: Run the @QuarkusTest suite for POST /api/greetings.
+    execute: ./mvnw test
+  - name: Stack info
+    description: Show the Quarkus stack of this app (extensions, platform version).
+    execute: ./mvnw -q quarkus:info
